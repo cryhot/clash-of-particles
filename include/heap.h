@@ -4,6 +4,8 @@
  *
  * @author Jean-Raphaël GAGLIONE
  *
+ * This heap does not handle NULL values.
+ *
  * Inserting a value and extracting the minimum value are guaranteed
  * to have a worst-case complexity in $O(\log n)$ where $n$ is the
  * size of the heap.
@@ -61,19 +63,21 @@ heap_t *heap_new (compare_func_t comparator);
  *
  * @pre  `p_heap` is not `NULL`
  */
-bool heap_is_empty (heap_t *p_heap);
+bool heap_is_empty (heap_t const *p_heap);
 
 /**
- * @brief Insert a new value in the binary heap. The
- *        worst-case execution time of this function
- *        is guaranteed to be in \f$\log n\f$ where
- *        \f$n\f$ is the size of the binary heap.
+ * @brief Insert a new value in the binary heap.
+ *
+ * The worst-case execution time of this function
+ * is guaranteed to be in \f$\log n\f$ where
+ * \f$n\f$ is the size of the binary heap.
  *
  * @param p_heap  a pointer to the heap in which the value is
  *                to be inserted
  * @param value   the value to be inserted
  *
- * @pre `p_heap`  is not `NULL`
+ * @pre  `p_heap` is not `NULL`
+ * @pre  `value` is not `NULL`
  *
  * @post  After the call, `p_heap` will point to a binary heap
  *        in which the value `value` has been inserted according
@@ -90,9 +94,9 @@ void heap_insert (heap_t *p_heap, void *value);
  * @param p_heap  a pointer to the heap from which the value is
  *                to be extracted
  *
- * @return  the minimum value in the binary heap
+ * @return  the minimum value in the binary heap, or `NULL` if the heap is empty
  *
- * @pre  `p_heap` is not `NULL` and the binary heap is not empty
+ * @pre  `p_heap` is not `NULL`
  */
 void *heap_extract_min (heap_t *p_heap);
 
@@ -103,7 +107,7 @@ void *heap_extract_min (heap_t *p_heap);
  * @pre  `p_heap` is not `NULL`
  *
  * @post  After the call, all memory regions used for the nodes
- *        are deallocated.
+ *        are deallocated. Values are also deallocated.
  */
 void heap_deallocate (heap_t *p_heap);
 
