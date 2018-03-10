@@ -3,19 +3,30 @@ CC = gcc
 
 TARGETS = read-file write-fact snow
 EXECUTABLES = $(TARGETS:%=bin/%)
+TEST-TARGETS = heap-correctness heap-complexity
+TEST-EXECUTABLES = $(TEST-TARGETS:%=tests/%)
 
 DFLAGS = -I include/
 CFLAGS = -g -std=c99 -Wall -Werror $(DFLAGS) $(_GUI)
 LDFLAGS = -lm -lSDL
 
 .DEFAULT_GOAL = bin/
-.PHONY: clean mrproper doc bin/ $(TARGETS)
+.PHONY: clean mrproper doc bin/ tests/ $(TARGETS) $(TEST-TARGETS)
 
 
 bin/: $(EXECUTABLES)
 	@mkdir -p $@
 
+tests/: $(TEST-EXECUTABLES)
+	@mkdir -p $@
+
 $(TARGETS): %: bin/%
+
+$(TARGETS:%=run-%): run-%: bin/%
+	$<
+
+$(TEST-TARGETS:%=test-%): test-%: tests/%
+	$<
 
 doc:
 	doxygen conf/doxygen.conf
@@ -42,6 +53,10 @@ $(EXECUTABLES): bin/%: build/%.o
 	@mkdir -p $(dir $@)
 	$(CC) $(CFLAGS) -o $@ $^ $(LDFLAGS)
 
+$(TEST-EXECUTABLES): tests/%: build/tests/%.o
+	@mkdir -p $(dir $@)
+	$(CC) $(CFLAGS) -o $@ $^ $(LDFLAGS)
+
 bin/snow: build/disc.o
 
 
@@ -53,4 +68,4 @@ clean:
 	- rm -rf build/ *.csv fact.txt
 
 mrproper: clean
-	- rm -rf bin/ doc/
+	- rm -rf bin/ tests/ doc/

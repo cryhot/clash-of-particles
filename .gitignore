@@ -1,6 +1,7 @@
-/bin
-/build
-/doc
+/bin/
+/tests/
+/build/
+/doc/
 
 project*.pdf
 
