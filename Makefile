@@ -12,7 +12,10 @@ LDFLAGS = -lm -lSDL
 LDFLAGS-T = $(LDFLAGS)
 
 .DEFAULT_GOAL = bin/
-.PHONY: clean mrproper doc bin/ tests/ $(TARGETS) $(TEST-TARGETS)
+.PHONY: clean mrproper doc bin/ tests/
+.PHONY: $(TARGETS) $(TARGETS:%=run-%) $(TEST-TARGETS:%=test-%)
+
+.SECONDARY .PHONY: data/complexity_heap.csv
 
 
 bin/: $(EXECUTABLES)
@@ -23,11 +26,17 @@ tests/: $(TEST-EXECUTABLES)
 
 $(TARGETS): %: bin/%
 
-$(TARGETS:%=run-%): run-%: bin/%
-	$<
+$(patsubst %,run-%,$(TARGETS)): run-%: bin/%
+	./$<
 
-$(TEST-TARGETS:%=test-%): test-%: tests/%
-	$<
+test-%: tests/%
+	./$<
+
+test-heap-complexity: scripts/plot_heap_complexity.py data/complexity_heap.csv
+	./$< data/complexity_heap.csv
+
+data/complexity_heap.csv: tests/heap-complexity
+	./$< $@
 
 doc:
 	doxygen conf/doxygen.conf
@@ -68,7 +77,7 @@ add-files-svn:
 
 
 clean:
-	- rm -rf build/ *.csv fact.txt
+	- rm -rf build/ *.csv fact.txt data/complexity_heap.csv
 
 mrproper: clean
 	- rm -rf bin/ tests/ doc/

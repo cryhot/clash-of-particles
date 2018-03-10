@@ -1,11 +1,11 @@
 #define _GNU_SOURCE
 #include "heap.h"
 #include "dummy.h"
-#include <stdlib.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <math.h>
 
-int main(int argc, char const *argv[]) {
+int main(void) {
     printf("====================\n");
     heap_t *dummy_heap = heap_new(*compare_dummies);
     dummy_t *d;

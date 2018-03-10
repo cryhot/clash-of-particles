@@ -2,6 +2,7 @@
 /tests/
 /build/
 /doc/
+/data/complexity_heap.csv
 
 project*.pdf
 
