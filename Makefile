@@ -6,9 +6,10 @@ EXECUTABLES = $(TARGETS:%=bin/%)
 TEST-TARGETS = heap-correctness heap-complexity
 TEST-EXECUTABLES = $(TEST-TARGETS:%=tests/%)
 
-DFLAGS = -I include/
+DFLAGS = -I include/ -I include/tests
 CFLAGS = -g -std=c99 -Wall -Werror $(DFLAGS) $(_GUI)
 LDFLAGS = -lm -lSDL
+LDFLAGS-T = $(LDFLAGS)
 
 .DEFAULT_GOAL = bin/
 .PHONY: clean mrproper doc bin/ tests/ $(TARGETS) $(TEST-TARGETS)
@@ -55,9 +56,11 @@ $(EXECUTABLES): bin/%: build/%.o
 
 $(TEST-EXECUTABLES): tests/%: build/tests/%.o
 	@mkdir -p $(dir $@)
-	$(CC) $(CFLAGS) -o $@ $^ $(LDFLAGS)
+	$(CC) $(CFLAGS) -o $@ $^ $(LDFLAGS-T)
 
 bin/snow: build/disc.o
+tests/heap-correctness: build/heap.o
+tests/heap-complexity:  build/heap.o
 
 
 add-files-svn:
