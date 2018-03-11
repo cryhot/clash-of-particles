@@ -32,7 +32,7 @@ typedef double time_t;
 typedef double loc_t;
 
 /** @brief Checks if a time represent a future but still reachable event. */
-#define IS_FUTURE_TIME(t) (0 < (t) && (t) < INFINITY)
+#define IS_FUTURE_TIME(t) (isfinite(t) && 0 < (t))
 
 /** @brief Checks if a location value is zero, considering the epsilon value. */
 #define EQ_LOC_ZERO(l) (fabs(l) < EPS)

@@ -1,6 +1,6 @@
 /** @file particle.h
  *
- * @brief Simple definition of a particule
+ * @brief Simple definition of a particule.
  *
  * @author Jean-Raphaël GAGLIONE
  *
@@ -21,7 +21,7 @@ struct particle {
      * Represents the number of collisions in which the particule
      * has been involved since the beginning of the simulation.
      */
-    long col_counter;
+    size_t col_counter;
 
     /** @brief Absolute time of the snapshot
      *
