@@ -70,7 +70,7 @@ struct particle {
 
 
 
-/** @brief Update the particle postion at a new timestamp.
+/** @brief Update the particle position at a new timestamp.
  *
  * The particle position and velocity are set to their values at snapshot `timestamp`.
  * @param p  particule concerned
@@ -79,7 +79,7 @@ struct particle {
 void update (particle_t *p, time_t timestamp);
 
 
-/** @brief Compute the time before the center of the particle crosses the given hyperplane.
+/** @brief Compute the time before the the paticle touches the given hyperplane.
  *
  * In 2D, hyperplanes are lines:
  * - for collisions with vertical line, use `dim=0`
@@ -105,7 +105,7 @@ time_t time_before_crossing_hplane (particle_t const *p, size_t dim, loc_t pos);
 void collide_hplane (particle_t *p, size_t dim, loc_t pos);
 
 
-/** @brief Compute the time at which two particles collides.
+/** @brief Compute the time at which two particles touch each other.
  *
  * The returned time can be lower than the `timestamp` times, meaning that
  * the collision is a passed event.
@@ -114,7 +114,7 @@ void collide_hplane (particle_t *p, size_t dim, loc_t pos);
  * @param p2  second particule concerned
  * @return  relative time of the collision, regarding the timestamp of `p1`
  */
-time_t time_before_collision (particle_t const *p1, particle_t const *p2);
+time_t time_before_contact (particle_t const *p1, particle_t const *p2);
 
 /** @brief Update the particles location after a collision between them.
  *
