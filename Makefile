@@ -3,7 +3,7 @@ CC = gcc
 
 TARGETS = read-file write-fact snow
 EXECUTABLES = $(TARGETS:%=bin/%)
-TEST-TARGETS = heap-correctness heap-complexity
+TEST-TARGETS = heap-correctness heap-complexity particle
 TEST-EXECUTABLES = $(TEST-TARGETS:%=tests/%)
 
 DFLAGS = -I include/ -I include/tests
@@ -29,7 +29,7 @@ $(TARGETS): %: bin/%
 $(patsubst %,run-%,$(TARGETS)): run-%: bin/%
 	./$<
 
-test-%: tests/%
+test-heap-correctness test-particle: test-%: tests/%
 	./$<
 
 test-heap-complexity: scripts/plot_heap_complexity.py data/complexity_heap.csv
@@ -41,7 +41,7 @@ data/complexity_heap.csv: tests/heap-complexity
 doc:
 	doxygen conf/doxygen.conf
 	@echo DOCUMENTATION GENERATED:
-	@echo "    file://$(realpath doc/html/index.html)"
+	@echo "    file://$$(realpath doc/html/index.html)"
 
 
 build/%.o: src/%.c
@@ -51,8 +51,8 @@ build/%.o: src/%.c
 build/%.d: src/%.c
 	@mkdir -p $(dir $@)
 	@set -e; rm -f $@; \
-	$(CC) -MM $(DFLAGS) $< | \
-	sed 's,\($(notdir $*)\)\.o[ :]*,$(@:%.d=%.o) $@: ,g' > $@
+	 $(CC) -MM $(DFLAGS) $< | \
+	 sed 's,\($(notdir $*)\)\.o[ :]*,$(@:%.d=%.o) $@: ,g' > $@
 
 -include $(patsubst src/%.c,build/%.d,$(shell find src/ -name '*.c'))
 
@@ -70,6 +70,7 @@ $(TEST-EXECUTABLES): tests/%: build/tests/%.o
 bin/snow: build/disc.o
 tests/heap-correctness: build/heap.o
 tests/heap-complexity:  build/heap.o
+tests/particle: build/particle.o build/physics.o
 
 
 add-files-svn:

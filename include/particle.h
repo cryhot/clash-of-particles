@@ -35,7 +35,7 @@ struct particle {
      *
      * The mass of a particle is assumed to be constant over time.
      */
-    double mass;
+    mass_t mass;
 
     /** @brief Radius of the particule
      *
@@ -100,9 +100,8 @@ time_t time_before_crossing_hplane (particle_t const *p, size_t dim, loc_t pos);
  * - for collisions with horizontal line, use `dim=1`
  * @param p  particule concerned
  * @param dim  dimention orthogonal to the hyperplane
- * @param pos  position of that plane along the given dimention axis
  */
-void collide_hplane (particle_t *p, size_t dim, loc_t pos);
+void collide_hplane (particle_t *p, size_t dim);
 
 
 /** @brief Compute the time at which two particles touch each other.

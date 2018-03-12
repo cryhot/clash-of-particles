@@ -30,7 +30,7 @@ int main(int argc, char const *argv[]) {
     }
     dummies[0].key += 0;
 
-    for (size_t nb = MIN_NB; nb <= MAX_NB; nb <<=2) {
+    for (size_t nb = MIN_NB; nb <= MAX_NB; nb = nb*17/16) {
         heap_t *dummy_heap = heap_new(*compare_dummies);
         clock_t start, end;
 

@@ -26,19 +26,33 @@ typedef double time_t;
 /** @brief An alias to the type used for spatial locations. */
 typedef double loc_t;
 
-#ifndef EPS
+/** @brief An alias to the type used for masses. */
+typedef double mass_t;
+
+#ifndef T_EPS
+/** @brief An constant for the temporal epsilon value. */
+#define T_EPS 1e-16
+#endif
+
+#ifndef S_EPS
 /** @brief An constant for the spatial epsilon value. */
-#define EPS 1e-16
+#define S_EPS 1e-16
 #endif
 
 /** @brief Checks if a time represent a future but still reachable event. */
 #define IS_FUTURE_TIME(t) (isfinite(t) && 0 < (t))
 
+/** @brief Checks if a time is before an other time. */
+#define IS_BEFORE(t1, t2) (isless((t1),(t2)) || (!isfinite(t2) && isfinite(t1)))
+
 /** @brief Constant for a non-existant time. */
-#define NEVER NAN;
+#define NEVER NAN
+
+/** @brief Checks if a time value is zero, considering the epsilon value. */
+#define EQ_TIME_ZERO(l) (fabs(l) < T_EPS)
 
 /** @brief Checks if a location value is zero, considering the epsilon value. */
-#define EQ_LOC_ZERO(l) (fabs(l) < EPS)
+#define EQ_LOC_ZERO(l) (fabs(l) < S_EPS)
 
 
 /** @brief Compute the time to achieve a certain distance at a certain speed.

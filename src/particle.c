@@ -12,13 +12,13 @@ update(particle_t *p, time_t timestamp)
 time_t
 time_before_crossing_hplane(particle_t const *p, size_t dim, loc_t pos)
 {
-    loc_t dist = p->position[dim] - pos;
+    loc_t dist = pos - p->position[dim];
     dist += p->radius * (dist>0 ? -1 : 1);
     return path_time(dist, p->velocity[dim]);
 }
 
 void
-collide_hplane(particle_t *p, size_t dim, loc_t pos)
+collide_hplane(particle_t *p, size_t dim)
 {
     p->velocity[dim] *= -1;
     p->col_counter++;
@@ -33,8 +33,8 @@ time_before_contact(particle_t const *p1, particle_t const *p2)
 
     loc_t dvel[NB_DIM];
     loc_t dpos[NB_DIM];
-    loc_delta(p1->position, p2_temp.position, dpos);
-    loc_delta(p1->velocity, p2_temp.velocity, dvel);
+    loc_delta(p2_temp.position, p1->position, dpos);
+    loc_delta(p2_temp.velocity, p1->velocity, dvel);
     loc_t dist_min = p1->radius + p2->radius;
 
     loc_t prod_pv = loc_scal_prod(dpos, dvel);
@@ -43,7 +43,7 @@ time_before_contact(particle_t const *p1, particle_t const *p2)
     loc_t prod_pp_min = dist_min * dist_min;   // minimum distance (squared)
     loc_t deterinant = prod_pv*prod_pv - prod_vv*(prod_pp-prod_pp_min);
     if (deterinant<0) return NEVER;
-    return (prod_pv+sqrt(deterinant)) / prod_vv;
+    return - (prod_pv+sqrt(deterinant)) / prod_vv;
 }
 
 void
@@ -51,8 +51,8 @@ collide_particule(particle_t *p1, particle_t *p2)
 {
     loc_t dvel[NB_DIM];
     loc_t dpos[NB_DIM];
-    loc_delta(p1->position, p2->position, dpos);
-    loc_delta(p1->velocity, p2->velocity, dvel);
+    loc_delta(p2->position, p1->position, dpos);
+    loc_delta(p2->velocity, p1->velocity, dvel);
 
     double long coeff = 2.0l * loc_scal_prod(dpos, dvel) / (p1->mass+p2->mass) / loc_scal_prod(dpos, dpos);
     // dp.dp should be equal to (r1+r2)^2, and simulation is more stable if not
