@@ -109,22 +109,25 @@ enum event_type get_event_type (event_t *e);
  * the "present" time is assumed to be `p1` current timestamp
  * @param p1  first particle involved in the collision
  * @param p2  second particle involved in the collision
- * @return  the collision event, or `NULL` if no collision will occur
+ * @param result  the collision event, modified in place
+ * @return  `true` if the event is created (`false` if no collision will occur)
  */
-event_t *new_event_collide_particle (particle_t *p1, particle_t *p2);
+bool event_collide_particle (event_t *result, particle_t *p1, particle_t *p2);
 
 /** @brief Create a new {@link EVENT_COLLIDE_HPLANE hplane collision event}.
  * @param p1  the particle involved in the collision
  * @param dim  dimention orthogonal to the hyperplane
  * @param pos  position of that plane along the given dimention axis
- * @return  the collision event, or `NULL` if no collision will occur
+ * @param result  the collision event, modified in place
+ * @return  `true` if the event is created (`false` if no collision will occur)
  */
-event_t *new_event_collide_hplane (particle_t *p, size_t dim, loc_t pos);
+bool event_collide_hplane (event_t *result, particle_t *p, size_t dim, loc_t pos);
 
 /** @brief Create a new {@link EVENT_REFRESH refresh event}.
  * @param timestamp  absolute time of the event
- * @return  the refresh event
+ * @param result  the refresh event, modified in place
+ * @return  `true`
  */
-event_t *new_event_refresh (time_t timestamp);
+bool event_refresh (event_t *result, time_t timestamp);
 
 #endif
