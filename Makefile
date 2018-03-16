@@ -3,7 +3,7 @@ CC = gcc
 
 TARGETS = read-file write-fact snow
 EXECUTABLES = $(TARGETS:%=bin/%)
-TEST-TARGETS = heap-correctness heap-complexity particle
+TEST-TARGETS = heap-correctness heap-complexity particle loader
 TEST-EXECUTABLES = $(TEST-TARGETS:%=tests/%)
 
 DFLAGS = -I include/ -I include/tests
@@ -31,6 +31,9 @@ $(patsubst %,run-%,$(TARGETS)): run-%: bin/%
 
 test-heap-correctness test-particle: test-%: tests/%
 	./$<
+
+test-loader: test-%: tests/% data/newton-simple.txt
+	./$< data/newton-simple.txt
 
 test-heap-complexity: scripts/plot_heap_complexity.py data/complexity_heap.csv
 	./$< data/complexity_heap.csv
@@ -70,7 +73,8 @@ $(TEST-EXECUTABLES): tests/%: build/tests/%.o
 bin/snow: build/disc.o
 tests/heap-correctness: build/heap.o
 tests/heap-complexity:  build/heap.o
-tests/particle: build/particle.o build/physics.o
+tests/particle: $(patsubst %,build/%.o,particle physics)
+tests/loader:  $(patsubst %,build/%.o,simulation particle physics)
 
 
 add-files-svn:
