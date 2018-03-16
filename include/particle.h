@@ -1,6 +1,6 @@
 /** @file particle.h
  *
- * @brief Simple definition of a particule.
+ * @brief Simple definition of a particle.
  *
  * @author Jean-Raphaël GAGLIONE
  *
@@ -18,34 +18,34 @@ typedef struct particle particle_t;
 struct particle {
     /** @brief Collision counter
      *
-     * Represents the number of collisions in which the particule
+     * Represents the number of collisions in which the particle
      * has been involved since the beginning of the simulation.
      */
     size_t col_counter;
 
     /** @brief Absolute time of the snapshot
      *
-     * Represents the time at which the particule is described.
+     * Represents the time at which the particle is described.
      */
     time_t timestamp;
 
-    /** @brief Mass of the particule
+    /** @brief Mass of the particle
      *
-     * Represents the mass of the particule.
+     * Represents the mass of the particle.
      *
      * The mass of a particle is assumed to be constant over time.
      */
     mass_t mass;
 
-    /** @brief Radius of the particule
+    /** @brief Radius of the particle
      *
-     * Represents the radius of the spherical particule.
+     * Represents the radius of the spherical particle.
      *
      * The radius of a particle is assumed to be constant over time.
      */
     loc_t radius;
 
-    /** @brief Position of the particule at snapshot time
+    /** @brief Position of the particle at snapshot time
      *
      * Represent the position as a vector of `NB_DIM` dimention.
      *
@@ -56,7 +56,7 @@ struct particle {
      */
     loc_t position[NB_DIM];
 
-    /** @brief Velocity of the particule at snapshot time
+    /** @brief Velocity of the particle at snapshot time
      *
      * Represent the velocity as a vector of `NB_DIM` dimention.
      *
@@ -73,7 +73,7 @@ struct particle {
 /** @brief Update the particle position at a new timestamp.
  *
  * The particle position and velocity are set to their values at snapshot `timestamp`.
- * @param p  particule concerned
+ * @param p  particle concerned
  * @param timestamp  absolute timestamp
  */
 void update (particle_t *p, time_t timestamp);
@@ -84,7 +84,7 @@ void update (particle_t *p, time_t timestamp);
  * In 2D, hyperplanes are lines:
  * - for collisions with vertical line, use `dim=0`
  * - for collisions with horizontal line, use `dim=1`
- * @param p  particule concerned
+ * @param p  particle concerned
  * @param dim  dimention orthogonal to the hyperplane
  * @param pos  position of that plane along the given dimention axis
  * @return  relative time before crossing
@@ -98,7 +98,7 @@ time_t time_before_crossing_hplane (particle_t const *p, size_t dim, loc_t pos);
  * In 2D, hyperplanes are lines:
  * - for collisions with vertical line, use `dim=0`
  * - for collisions with horizontal line, use `dim=1`
- * @param p  particule concerned
+ * @param p  particle concerned
  * @param dim  dimention orthogonal to the hyperplane
  */
 void collide_hplane (particle_t *p, size_t dim);
@@ -109,8 +109,8 @@ void collide_hplane (particle_t *p, size_t dim);
  * The returned time can be lower than the `timestamp` times, meaning that
  * the collision is a passed event.
  *
- * @param p1  first particule concerned
- * @param p2  second particule concerned
+ * @param p1  first particle concerned
+ * @param p2  second particle concerned
  * @return  relative time of the collision, regarding the timestamp of `p1`
  */
 time_t time_before_contact (particle_t const *p1, particle_t const *p2);
@@ -120,9 +120,9 @@ time_t time_before_contact (particle_t const *p1, particle_t const *p2);
  * The two particles are assumed to have the same `timestamp` time, and
  * the collision is assumed to occur at that time.
  *
- * @param p1  first particule concerned
- * @param p2  second particule concerned
+ * @param p1  first particle concerned
+ * @param p2  second particle concerned
  */
-void collide_particule (particle_t *p1, particle_t *p2);
+void collide_particle (particle_t *p1, particle_t *p2);
 
 #endif

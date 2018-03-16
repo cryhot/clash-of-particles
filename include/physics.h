@@ -19,25 +19,39 @@
 #define NB_DIM 2
 #endif
 
+/** @brief A macro to calculate EPS
+ * @param type  type of the EPS
+ * @param unit  unit of the EPS
+ * @param eps  fraction of the eps (between `0` and `1`)
+ */
+#define EPS(type,unit,eps) ((type)((unit)*(eps)))
 
 /** @brief An alias to the type used for times. */
 typedef double time_t;
-
-/** @brief An alias to the type used for spatial locations. */
-typedef double loc_t;
-
-/** @brief An alias to the type used for masses. */
-typedef double mass_t;
-
+/** @brief The printing format relative to the time type. */
+#define time_F "lf"
+/** @brief A constant for the temporal unit. */
+#define T_UNIT 1.0
 #ifndef T_EPS
-/** @brief An constant for the temporal epsilon value. */
+/** @brief A constant for the temporal epsilon value, relative to the unit. */
 #define T_EPS 1e-16
 #endif
 
+/** @brief An alias to the type used for spatial locations. */
+typedef double loc_t;
+/** @brief The printing format relative to the location type. */
+#define loc_F "lf"
+/** @brief A constant for the spatial unit. */
+#define S_UNIT 1.0
 #ifndef S_EPS
-/** @brief An constant for the spatial epsilon value. */
+/** @brief A constant for the spatial epsilon value, relative to the unit. */
 #define S_EPS 1e-16
 #endif
+
+/** @brief An alias to the type used for masses. */
+typedef double mass_t;
+/** @brief The printing format relative to the mass type. */
+#define mass_F "lf"
 
 /** @brief Checks if a time represent a future but still reachable event. */
 #define IS_FUTURE_TIME(t) (isfinite(t) && 0 < (t))
@@ -49,10 +63,10 @@ typedef double mass_t;
 #define NEVER NAN
 
 /** @brief Checks if a time value is zero, considering the epsilon value. */
-#define EQ_TIME_ZERO(l) (fabs(l) < T_EPS)
+#define EQ_TIME_ZERO(l) (fabs(l) <= EPS(time_t,T_UNIT,T_EPS))
 
 /** @brief Checks if a location value is zero, considering the epsilon value. */
-#define EQ_LOC_ZERO(l) (fabs(l) < S_EPS)
+#define EQ_LOC_ZERO(l) (fabs(l) <= EPS(loc_t,S_UNIT,S_EPS))
 
 
 /** @brief Compute the time to achieve a certain distance at a certain speed.

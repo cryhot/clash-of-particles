@@ -18,7 +18,7 @@
 enum event_type {
     /** @brief Collision between two particles.
      *
-     * `event.particule_a!=NULL` and `event.particule_b!=NULL`
+     * `event.particle_a!=NULL` and `event.particle_b!=NULL`
      *
      * @see new_event_collide_particle
      */
@@ -26,18 +26,18 @@ enum event_type {
 
     /** @brief Collision of a particle with an hyperplane.
      *
-     * `event.particule_a!=NULL` and `event.particule_b==NULL`
+     * `event.particle_a!=NULL` and `event.particle_b==NULL`
      *
-     * Normal dimention to the hyperplane can be retrieved with `event.particule_b_col`.
+     * Normal dimention to the hyperplane can be retrieved with `event.particle_b_col`.
      * @see new_event_collide_hplane
      */
     EVENT_COLLIDE_HPLANE,
 
     /** @brief Refreshing event.
      *
-     * `event.particule_a==NULL` and `event.particule_b==NULL`
+     * `event.particle_a==NULL` and `event.particle_b==NULL`
      *
-     * `event.particule_a_col` and `event.particule_b_col` can be ignored.
+     * `event.particle_a_col` and `event.particle_b_col` can be ignored.
      * @see new_event_refresh
      */
     EVENT_REFRESH,
@@ -49,10 +49,10 @@ typedef struct event event_t;
 /** @brief The structure representing the events.
  *
  * Here is how to interprete event :
- * - `event.particule_a==NULL` and `event.particule_b==NULL`: refreshing event ({@link EVENT_REFRESH}).
- * - `event.particule_a!=NULL` and `event.particule_b==NULL`: collision with an hyperplane ({@link EVENT_COLLIDE_HPLANE}).
- * Normal dimention to the hyperplane can be retrieved with `event.particule_b_col`.
- * - `event.particule_a!=NULL` and `event.particule_b!=NULL`: collision between two particles ({@link EVENT_COLLIDE_PARTICLE})
+ * - `event.particle_a==NULL` and `event.particle_b==NULL`: refreshing event ({@link EVENT_REFRESH}).
+ * - `event.particle_a!=NULL` and `event.particle_b==NULL`: collision with an hyperplane ({@link EVENT_COLLIDE_HPLANE}).
+ * Normal dimention to the hyperplane can be retrieved with `event.particle_b_col`.
+ * - `event.particle_a!=NULL` and `event.particle_b!=NULL`: collision between two particles ({@link EVENT_COLLIDE_PARTICLE})
  */
 struct event {
     /** @brief Absolute time of the event
@@ -61,25 +61,25 @@ struct event {
 
     /** @brief Pointer to the first particle involved in the collision
      */
-    particle_t *particule_a;
+    particle_t *particle_a;
 
     /** @brief Pointer to the second particle involved in the collision
      */
-    particle_t *particule_b;
+    particle_t *particle_b;
 
-    /** @brief Number of collision of the first particule when the event was planned.
+    /** @brief Number of collision of the first particle when the event was planned.
      *
-     * Represents orthogonal dimention when particule is `NULL`,
+     * Represents orthogonal dimention when particle is `NULL`,
      * in case of `EVENT_COLLIDE_HPLANE`.
      */
-    size_t particule_a_col;
+    size_t particle_a_col;
 
-    /** @brief Number of collision of the second particule when the event was planned.
+    /** @brief Number of collision of the second particle when the event was planned.
      *
-     * Represents orthogonal dimention when particule is `NULL`,
+     * Represents orthogonal dimention when particle is `NULL`,
      * in case of `EVENT_COLLIDE_HPLANE`.
      */
-    size_t particule_b_col;
+    size_t particle_b_col;
 
 };
 

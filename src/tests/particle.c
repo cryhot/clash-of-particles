@@ -48,7 +48,7 @@ check_collision_hplane(particle_t const *p, size_t dim,
 }
 
 void
-check_collision_particule(particle_t const *p1, particle_t const *p2,
+check_collision_particle(particle_t const *p1, particle_t const *p2,
                           time_t time2col,
                           loc_t new_v1x, loc_t new_v1y,
                           loc_t new_v2x, loc_t new_v2y)
@@ -66,7 +66,7 @@ check_collision_particule(particle_t const *p1, particle_t const *p2,
     update(&p2_temp, t);
     // printf("p1(%lf %lf)\n", p1_temp.position[0], p1_temp.position[1]);
     // printf("p2(%lf %lf)\n", p2_temp.position[0], p2_temp.position[1]);
-    collide_particule(&p1_temp, &p2_temp);
+    collide_particle(&p1_temp, &p2_temp);
     printf("%15.2lf    (%9.6lf, %9.6lf)\n", t, p1_temp.velocity[0], p1_temp.velocity[1]);
     printf("%15.8s    (%9.6lf, %9.6lf)\n", "", p2_temp.velocity[0], p2_temp.velocity[1]);
     assert(EQ_LOC_ZERO(p1_temp.velocity[0]-new_v1x));
@@ -77,7 +77,7 @@ int
 main(void)
 {
     printf("====================\n");
-    printf("generating particules...\n");
+    printf("generating particles...\n");
     particle_t *p1 = new_test_particle(.25, .25,  .50,  .00, 0.5, 1e-2);
     particle_t *p2 = new_test_particle(.25, .25, -.50,  .00, 0.5, 1e-2);
     particle_t *p3 = new_test_particle(.25, .25,  .00,  .50, 0.5, 1e-2);
@@ -107,10 +107,10 @@ main(void)
     printf("====================\n");
     printf("testing collisions between particles...\n");
     printf("%-17.17s  %-22.12s\n", "time to collision", "new velocity");
-    check_collision_particule(p1, p6, 0.470000, -.115385,  .000000,  .384615,  .000000);
-    check_collision_particule(p1, p7, 0.640000, -.250000,  .000000,  .500000,  .000000);
-    check_collision_particule(p1, p8, 1.352274,  .067993, -.329141,  .520004, -.194287);
-    check_collision_particule(p7, p8,    NEVER,        0,        0,        0,        0);
+    check_collision_particle(p1, p6, 0.470000, -.115385,  .000000,  .384615,  .000000);
+    check_collision_particle(p1, p7, 0.640000, -.250000,  .000000,  .500000,  .000000);
+    check_collision_particle(p1, p8, 1.352274,  .067993, -.329141,  .520004, -.194287);
+    check_collision_particle(p7, p8,    NEVER,        0,        0,        0,        0);
     printf("OK!\n");
     printf("====================\n");
     free(p1);

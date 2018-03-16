@@ -47,7 +47,7 @@ time_before_contact(particle_t const *p1, particle_t const *p2)
 }
 
 void
-collide_particule(particle_t *p1, particle_t *p2)
+collide_particle(particle_t *p1, particle_t *p2)
 {
     loc_t dvel[NB_DIM];
     loc_t dpos[NB_DIM];
