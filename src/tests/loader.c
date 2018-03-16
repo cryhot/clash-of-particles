@@ -22,5 +22,9 @@ int main(int argc, char const *argv[]) {
 
     export_particles(particle_list, count, stdout, "<file read with test-loader>");
 
+    for (size_t i = 0; i < count; i++) {
+        free(particle_list[i]);
+    }
+
     return 0;
 }

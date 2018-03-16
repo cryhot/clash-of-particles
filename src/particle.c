@@ -43,7 +43,7 @@ time_before_contact(particle_t const *p1, particle_t const *p2)
     loc_t prod_pp_min = dist_min * dist_min;   // minimum distance (squared)
     loc_t deterinant = prod_pv*prod_pv - prod_vv*(prod_pp-prod_pp_min);
     if (deterinant<0) return NEVER;
-    return - (prod_pv+sqrt(deterinant)) / prod_vv;
+    return - (prod_pv+sqrt(deterinant)) / prod_vv * time_UNIT;
 }
 
 void

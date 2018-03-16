@@ -4,7 +4,7 @@
 time_t
 path_time(loc_t dist, loc_t speed)
 {
-    return dist / speed; // returns +/- inf if speed==0
+    return dist / speed * time_UNIT; // returns +/- inf if speed==0
 }
 
 
@@ -45,5 +45,5 @@ loc_distance(loc_t const loc1[NB_DIM], loc_t const loc2[NB_DIM])
 void
 coords_update(loc_t pos[NB_DIM], loc_t vel[NB_DIM], time_t dt)
 {
-    loc_append(pos, vel, dt); // uniform motion
+    loc_append(pos, vel, (long double)dt/time_UNIT); // uniform motion
 }
