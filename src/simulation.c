@@ -32,7 +32,7 @@ static void compute_collisions_particules(heap_t *event_heap, particle_t *p1, pa
 void
 simulation_loop(particle_t *particle_list[], size_t nb_part, time_t duration, void (*callback)(time_t timestamp), time_t callback_rate)
 {
-    heap_t *event_heap = heap_new(&compare_events); // queue of future events
+    heap_t *event_heap = heap_new(&compare_events, &free); // queue of future events
     if (!EQ_TIME_ZERO(callback_rate)) // create first refresh event
         heap_insert(event_heap, event_refresh(0));
     for (size_t i = 0; i < nb_part; i++) { // compute every collision events at initial state

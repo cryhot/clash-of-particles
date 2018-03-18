@@ -37,6 +37,10 @@ typedef struct heap heap_t;
  */
 typedef int (*compare_func_t)(void *v1, void *v2);
 
+/** @brief An alias to operation functions.
+ */
+typedef void (*operate_func_t)(void *v);
+
 /** @brief The structure representing the binary heap. */
 struct heap;
 
@@ -47,11 +51,14 @@ struct heap;
  *
  * @param comparator  the comparator function used by the elements
  *
+ * @param deallocate_value  the function charged to deallocate values -
+ *                          use `NULL`if not needed
+ *
  * @return  a new empty binary heap
  *
  * @pre  `comparator` is not `NULL`
  */
-heap_t *heap_new (compare_func_t comparator);
+heap_t *heap_new (compare_func_t comparator, operate_func_t deallocate_value);
 
 /**
  * @brief Is the binary heap empty?

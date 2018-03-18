@@ -1,6 +1,7 @@
+/build/
 /bin/
 /tests/
-/build/
+/valgrind/
 /doc/
 /data/complexity_heap.csv
 

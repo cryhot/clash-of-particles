@@ -220,3 +220,16 @@ void CloseWindow() {
     TerminateSDL();
 #endif
 }
+
+// funny solution to eliminate warnings "definded but not used"
+static void dummy_foo2(void);
+static void dummy_foo(void) {
+    IntensifyPixel(0,0,0,0,0);
+    SigHandler(0);
+    InitSDL("",0,0);
+    TerminateSDL();
+    dummy_foo2();
+}
+static void dummy_foo2(void) {
+    dummy_foo();
+}

@@ -2,6 +2,12 @@
 #include <stdlib.h>
 
 int main(int argc, char **argv) {
+    if (argc<=1) {
+        fprintf(stderr, "Usage :\n");
+        fprintf(stderr, "\t%s file\n", argv[0]);
+        return 1;
+    }
+
     FILE *p_file = NULL;
 
     p_file = fopen(argv[1], "r");

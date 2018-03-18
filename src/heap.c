@@ -23,6 +23,8 @@ struct heap {
     size_t         size;
     /** The comparator function used by the elements */
     compare_func_t comparator;
+    /** The operator function used at deallocation */
+    operate_func_t deallocate_value;
 };
 
 
@@ -98,9 +100,9 @@ static void descend_while_possible(heap_node_t *node, compare_func_t comparator)
 }
 
 // functions from the signature
-heap_t *heap_new(compare_func_t comparator) {
+heap_t *heap_new(compare_func_t comparator, operate_func_t deallocate_value) {
     heap_t *ans = malloc(sizeof *ans);
-    *ans = (heap_t){NULL, 0, comparator};
+    *ans = (heap_t){NULL, 0, comparator, deallocate_value};
     return ans;
 }
 
@@ -140,14 +142,14 @@ void *heap_extract_min(heap_t *p_heap) {
 //     print_level(p_heap->root, 0, p_heap->size, 1);
 // }
 
-static void deallocate_node(heap_node_t *node) {
+static void deallocate_node(heap_node_t *node, operate_func_t deallocate_value) {
     if (node==NULL) return;
-    for (int i=0; i<2; i++) deallocate_node(*get_child(node, i));
-    if (node->value!=NULL) free(node->value);
+    for (int i=0; i<2; i++) deallocate_node(*get_child(node, i), deallocate_value);
+    if (deallocate_value!=NULL && node->value!=NULL) (*deallocate_value)(node->value);
     free(node);
 }
 
 void heap_deallocate(heap_t *p_heap) {
-    deallocate_node(p_heap->root);
+    deallocate_node(p_heap->root, p_heap->deallocate_value);
     free(p_heap);
 }

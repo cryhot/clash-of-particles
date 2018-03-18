@@ -1,5 +1,7 @@
 _GUI = $(if $(NOGUI),,-D GUI)
+PRE_ = $(if $(DEBUG),$(VALGRIND) ,)
 CC = gcc
+VALGRIND = valgrind --leak-check=full --error-exitcode=1
 
 # DIRECTORIES
 D_SRC		= src
@@ -11,6 +13,7 @@ D_DOC		= doc
 D_BUILD		= build
 D_BIN		= bin
 D_TESTS		= tests
+D_VALGRIND	= valgrind
 
 #EXECUTABLES
 TARGETS = clash-of-particles snow read-file write-fact
@@ -19,16 +22,20 @@ TEST-TARGETS = heap-correctness heap-complexity particle loader
 TEST-EXECUTABLES = $(TEST-TARGETS:%=$(D_TESTS)/%)
 
 # FLAGS
-DFLAGS = -I $(D_INCLUDE)/ -I $(D_INCLUDE)/$(D_TESTS)
-CFLAGS = -g -std=c99 -Wall -Werror $(DFLAGS) $(_GUI)# -DNDEBUG -O3
+DFLAGS = -I $(D_INCLUDE)/ -I $(D_INCLUDE)/tests
+CFLAGS = -g -std=c99 -Wall -Werror $(DFLAGS) $(_GUI)$(if $(DEBUG),, -D NDEBUG -O3)
 LDFLAGS = -lm -lSDL
 LDFLAGS-T = $(LDFLAGS)
+VALGOPT = D_BUILD=$(D_VALGRIND)/$(D_BUILD) \
+          D_BIN=$(D_VALGRIND)/$(D_BIN) \
+          D_TESTS=$(D_VALGRIND)/$(D_TESTS) \
+          NOGUI=1 DEBUG=1
 
 .DEFAULT_GOAL = compile-all
 DEFAULT_INPUT_FILE = $(D_DATA)/newton-simple.txt
-.PHONY: clean mrproper compile-all doc $(D_BIN)/ $(D_TESTS)/
-.PHONY: $(TARGETS:%=compile-%) $(TARGETS:%=run-%)
-.PHONY: $(TEST-TARGETS:%=compile-test-%) $(TEST-TARGETS:%=test-%)
+.PHONY: clean mrproper nothing compile-all doc $(D_BIN)/ $(D_TESTS)/
+.PHONY: $(TARGETS:%=compile-%) $(TARGETS:%=run-%) $(TARGETS:%=valgrind-%)
+.PHONY: $(TEST-TARGETS:%=compile-test-%) $(TEST-TARGETS:%=test-%) $(TEST-TARGETS:%=valgrind-test-%)
 
 .SECONDARY .PHONY: $(D_DATA)/complexity_heap.csv
 
@@ -44,27 +51,34 @@ $(D_TESTS)/: $(TEST-EXECUTABLES)
 $(patsubst %,compile-%,$(TARGETS)): compile-%: $(D_BIN)/%
 
 # run executables
-$(patsubst %,run-%,$(filter-out clash-of-particles ,$(TARGETS))): run-%: $(D_BIN)/%
-	./$<
+$(patsubst %,run-%,$(filter-out clash-of-particles snow read-file,$(TARGETS))): run-%: $(D_BIN)/%
+	$(PRE_)./$<
 $(patsubst %,run-%,clash-of-particles): run-%: $(D_BIN)/% $(DEFAULT_INPUT_FILE)
-	./$< $(DEFAULT_INPUT_FILE)
+	$(PRE_)./$< $(DEFAULT_INPUT_FILE)
+$(patsubst %,run-%,snow): run-%: $(D_BIN)/%
+	( echo 200 ) | $(PRE_)./$<
+$(patsubst %,run-%,read-file): run-%: $(D_BIN)/% $(D_DATA)/toread.txt
+	$(PRE_)./$< $(D_DATA)/toread.txt
+$(patsubst %,valgrind-%,$(TARGETS)): valgrind-%:
+	$(MAKE) $(VALGOPT) $(@:valgrind-%=run-%)
 
 # test executables compilation
 $(patsubst %,compile-test-%,$(TEST-TARGETS)): compile-test-%: $(D_TESTS)/%
 
 # run test-executables
 $(patsubst %,test-%,$(filter-out loader heap-complexity,$(TEST-TARGETS))): test-%: $(D_TESTS)/%
-	./$<
+	$(PRE_)./$<
 $(patsubst %,test-%,loader): test-%: $(D_TESTS)/% $(DEFAULT_INPUT_FILE)
-	./$< $(DEFAULT_INPUT_FILE)
+	$(PRE_)./$< $(DEFAULT_INPUT_FILE)
 $(patsubst %,test-%,heap-complexity): $(D_SCRIPTS)/plot_heap_complexity.py $(D_DATA)/complexity_heap.csv
 	./$< $(D_DATA)/complexity_heap.csv
+$(patsubst %,valgrind-test-%,$(TEST-TARGETS)): valgrind-test-%:
+	$(MAKE) $(VALGOPT) $(@:valgrind-test-%=test-%)
 
 $(D_DATA)/complexity_heap.csv: $(D_TESTS)/heap-complexity
-	./$< $@
+	$(PRE_)./$< $@
 
 doc:
-	# doxygen $(D_CONF)/doxygen.conf OUTPUT_DIRECTORY=doc2
 	( cat $(D_CONF)/doxygen.conf ; echo "OUTPUT_DIRECTORY=$(D_DOC)" ) | doxygen -
 	@echo DOCUMENTATION GENERATED:
 	@echo "    file://$$(realpath $(D_DOC)/html/index.html)"
@@ -89,7 +103,7 @@ $(EXECUTABLES): $(D_BIN)/%: $(D_BUILD)/%.o
 	@mkdir -p $(dir $@)
 	$(CC) $(CFLAGS) -o $@ $^ $(LDFLAGS)
 
-$(TEST-EXECUTABLES): $(D_TESTS)/%: $(D_BUILD)/$(D_TESTS)/%.o
+$(TEST-EXECUTABLES): $(D_TESTS)/%: $(D_BUILD)/tests/%.o
 	@mkdir -p $(dir $@)
 	$(CC) $(CFLAGS) -o $@ $^ $(LDFLAGS-T)
 
@@ -107,7 +121,7 @@ add-files-svn:
 
 
 clean:
-	- rm -rf $(D_BUILD)/ *.csv fact.txt $(D_DATA)/complexity_heap.csv
+	- rm -rf $(D_BUILD)/ *.csv fact.txt $(D_DATA)/complexity_heap.csv $(D_VALGRIND)/$(D_BUILD)/
 
 mrproper: clean
 	- rm -rf $(D_BIN)/ $(D_TESTS)/ $(D_DOC)/

@@ -31,7 +31,7 @@ int main(int argc, char const *argv[]) {
     dummies[0].key += 0;
 
     for (size_t nb = MIN_NB; nb <= MAX_NB; nb = nb*17/16) {
-        heap_t *dummy_heap = heap_new(*compare_dummies);
+        heap_t *dummy_heap = heap_new(&compare_dummies, NULL);
         clock_t start, end;
 
         start = clock();

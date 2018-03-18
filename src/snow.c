@@ -65,7 +65,7 @@ void update_snow(int nb, snowflake cloud[nb])
 int main(void)
 {
     int nb;
-    printf("How many snowflakes? "); scanf("%d", &nb);
+    printf("How many snowflakes? "); if (scanf("%d", &nb)!=1) return 1;
 
     snowflake cloud[nb];
     CreateWindow("Let It Snow", SIZE, SIZE);

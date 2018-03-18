@@ -5,9 +5,15 @@
 #include <stdlib.h>
 #include <math.h>
 
+static void dealloc_dummy(void *dummy) {
+    dummy_t *d = dummy;
+    free(d->value);
+    free(d);
+}
+
 int main(void) {
     printf("====================\n");
-    heap_t *dummy_heap = heap_new(*compare_dummies);
+    heap_t *dummy_heap = heap_new(&compare_dummies, &dealloc_dummy);
     dummy_t *d;
 
     for (size_t i = 0; i < 50; i++) {
