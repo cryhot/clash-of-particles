@@ -43,11 +43,11 @@ check_collision_hplane(particle_t const *p, size_t dim,
     update(&p_temp, t);
     collide_hplane(&p_temp, dim);
     printf("%15.2f    (%9.6f, %9.6f)    (%9.6f, %9.6f)\n",
-           t/time_UNIT,
-           (float)p_temp.velocity[0]/loc_UNIT,
-           (float)p_temp.velocity[1]/loc_UNIT,
-           (float)p_temp.position[0]/loc_UNIT,
-           (float)p_temp.position[1]/loc_UNIT);
+           (float)(t/time_UNIT),
+           (float)((float)p_temp.velocity[0]/loc_UNIT),
+           (float)((float)p_temp.velocity[1]/loc_UNIT),
+           (float)((float)p_temp.position[0]/loc_UNIT),
+           (float)((float)p_temp.position[1]/loc_UNIT));
     assert(EQ_LOC_ZERO((float)p_temp.velocity[0]/loc_UNIT-new_vx));
     assert(EQ_LOC_ZERO((float)p_temp.velocity[1]/loc_UNIT-new_vy));
 }
@@ -71,17 +71,17 @@ check_collision_particle(particle_t const *p1, particle_t const *p2,
     update(&p2_temp, t);
     collide_particle(&p1_temp, &p2_temp);
     printf("%15.2f    (%9.6f, %9.6f)    (%9.6f, %9.6f)\n",
-           t/time_UNIT,
-           (float)p1_temp.velocity[0]/loc_UNIT,
-           (float)p1_temp.velocity[1]/loc_UNIT,
-           (float)p1_temp.position[0]/loc_UNIT,
-           (float)p1_temp.position[1]/loc_UNIT);
+           (float)(t/time_UNIT),
+           (float)((float)p1_temp.velocity[0]/loc_UNIT),
+           (float)((float)p1_temp.velocity[1]/loc_UNIT),
+           (float)((float)p1_temp.position[0]/loc_UNIT),
+           (float)((float)p1_temp.position[1]/loc_UNIT));
     printf("%15.8s    (%9.6f, %9.6f)    (%9.6f, %9.6f)\n",
            "",
-           (float)p2_temp.velocity[0]/loc_UNIT,
-           (float)p2_temp.velocity[1]/loc_UNIT,
-           (float)p2_temp.position[0]/loc_UNIT,
-           (float)p2_temp.position[1]/loc_UNIT);
+           (float)((float)p2_temp.velocity[0]/loc_UNIT),
+           (float)((float)p2_temp.velocity[1]/loc_UNIT),
+           (float)((float)p2_temp.position[0]/loc_UNIT),
+           (float)((float)p2_temp.position[1]/loc_UNIT));
     assert(EQ_LOC_ZERO((float)p1_temp.velocity[0]/loc_UNIT-new_v1x));
     assert(EQ_LOC_ZERO((float)p1_temp.velocity[1]/loc_UNIT-new_v1y));
     assert(EQ_LOC_ZERO((float)p2_temp.velocity[0]/loc_UNIT-new_v2x));

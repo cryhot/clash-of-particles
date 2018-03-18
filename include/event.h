@@ -105,29 +105,26 @@ int compare_events (void *event1, void *event2);
 enum event_type get_event_type (event_t *e);
 
 /** @brief Create a new {@link EVENT_COLLIDE_PARTICLE particle collision event}.
- *
- * the "present" time is assumed to be `p1` current timestamp
+ * @param timestamp  absolute time of the event
  * @param p1  first particle involved in the collision
  * @param p2  second particle involved in the collision
- * @param result  the collision event, modified in place
- * @return  `true` if the event is created (`false` if no collision will occur)
+ * @return  the event, which was allocated
  */
-bool event_collide_particle (event_t *result, particle_t *p1, particle_t *p2);
+event_t *event_collide_particle (time_t timestamp, particle_t *p1, particle_t *p2);
 
 /** @brief Create a new {@link EVENT_COLLIDE_HPLANE hplane collision event}.
+ * @param timestamp  absolute time of the event
  * @param p1  the particle involved in the collision
  * @param dim  dimention orthogonal to the hyperplane
- * @param pos  position of that plane along the given dimention axis
- * @param result  the collision event, modified in place
- * @return  `true` if the event is created (`false` if no collision will occur)
+ * @return  the event, which was allocated
  */
-bool event_collide_hplane (event_t *result, particle_t *p, size_t dim, loc_t pos);
+event_t *event_collide_hplane (time_t timestamp, particle_t *p, size_t dim);
 
 /** @brief Create a new {@link EVENT_REFRESH refresh event}.
  * @param timestamp  absolute time of the event
  * @param result  the refresh event, modified in place
- * @return  `true`
+ * @return  the event, which was allocated
  */
-bool event_refresh (event_t *result, time_t timestamp);
+event_t *event_refresh (time_t timestamp);
 
 #endif

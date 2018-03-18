@@ -109,6 +109,7 @@ bool heap_is_empty(heap_t const *p_heap) {
 }
 
 void heap_insert(heap_t *p_heap, void *value) {
+    if (value==NULL) return;
     heap_node_t **node_cell;
     heap_node_t node = {value, NULL, NULL, NULL};
     if (p_heap->size++ == 0) {
@@ -142,7 +143,7 @@ void *heap_extract_min(heap_t *p_heap) {
 static void deallocate_node(heap_node_t *node) {
     if (node==NULL) return;
     for (int i=0; i<2; i++) deallocate_node(*get_child(node, i));
-    free(node->value);
+    if (node->value!=NULL) free(node->value);
     free(node);
 }
 

@@ -13,7 +13,7 @@ int main(void) {
     for (size_t i = 0; i < 50; i++) {
         d = malloc(sizeof *d);
         d->key = i;
-        asprintf(&(d->value), "dummy #%lu", i);
+        if (asprintf(&(d->value), "dummy #%lu", i)<0) return 1;
 
         heap_insert(dummy_heap, d);
     }

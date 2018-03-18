@@ -38,39 +38,38 @@ get_event_type(event_t *e)
     }
 }
 
-bool
-event_collide_particle(event_t *result, particle_t *p1, particle_t *p2)
+event_t *
+event_collide_particle(time_t timestamp, particle_t *p1, particle_t *p2)
 {
-    time_t dt = time_before_contact(p1, p2);
-    if (!IS_FUTURE_TIME(dt)) return false;
-    result->timestamp = p1->timestamp + dt;
-    result->particle_a = p1;
-    result->particle_a_col = p1->col_counter;
-    result->particle_b = p2;
-    result->particle_b_col = p2->col_counter;
-    return true;
+    event_t *event = malloc(sizeof *event);
+    event->timestamp = timestamp;
+    event->particle_a = p1;
+    event->particle_a_col = p1->col_counter;
+    event->particle_b = p2;
+    event->particle_b_col = p2->col_counter;
+    return event;
 }
 
-bool
-event_collide_hplane(event_t *result, particle_t *p, size_t dim, loc_t pos)
+event_t *
+event_collide_hplane(time_t timestamp, particle_t *p, size_t dim)
 {
-    time_t dt = time_before_crossing_hplane(p, dim, pos);
-    if (!IS_FUTURE_TIME(dt)) return false;
-    result->timestamp = p->timestamp + dt;
-    result->particle_a = p;
-    result->particle_a_col = p->col_counter;
-    result->particle_b = NULL;
-    result->particle_b_col = dim;
-    return true;
+    event_t *event = malloc(sizeof *event);
+    event->timestamp = timestamp;
+    event->particle_a = p;
+    event->particle_a_col = p->col_counter;
+    event->particle_b = NULL;
+    event->particle_b_col = dim;
+    return event;
 }
 
-bool
-event_refresh(event_t *result, time_t timestamp)
+event_t *
+event_refresh(time_t timestamp)
 {
-    result->timestamp = timestamp;
-    result->particle_a = NULL;
-    result->particle_a_col = 0;
-    result->particle_b = NULL;
-    result->particle_b_col = 0;
-    return true;
+    event_t *event = malloc(sizeof *event);
+    event->timestamp = timestamp;
+    event->particle_a = NULL;
+    event->particle_a_col = 0;
+    event->particle_b = NULL;
+    event->particle_b_col = 0;
+    return event;
 }

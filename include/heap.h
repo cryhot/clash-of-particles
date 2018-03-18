@@ -68,6 +68,8 @@ bool heap_is_empty (heap_t const *p_heap);
 /**
  * @brief Insert a new value in the binary heap.
  *
+ * If the inserted value is `NULL`, it is ignored.
+ *
  * The worst-case execution time of this function
  * is guaranteed to be in \f$\log n\f$ where
  * \f$n\f$ is the size of the binary heap.
@@ -77,7 +79,6 @@ bool heap_is_empty (heap_t const *p_heap);
  * @param value   the value to be inserted
  *
  * @pre  `p_heap` is not `NULL`
- * @pre  `value` is not `NULL`
  *
  * @post  After the call, `p_heap` will point to a binary heap
  *        in which the value `value` has been inserted according

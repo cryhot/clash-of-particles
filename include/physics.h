@@ -27,9 +27,9 @@
 #define EPS(type,unit,eps) ((type)((unit)*(eps)))
 
 /** @brief An alias to the type used for times. */
-typedef double time_t;
+typedef long double time_t;
 /** @brief The printing format relative to the time type. */
-#define time_F "lf"
+#define time_F "Lf"
 /** @brief A constant for the temporal unit. */
 #define time_UNIT 1.0
 #ifndef time_EPS
@@ -38,9 +38,9 @@ typedef double time_t;
 #endif
 
 /** @brief An alias to the type used for spatial locations. */
-typedef double loc_t;
+typedef long double loc_t;
 /** @brief The printing format relative to the location type. */
-#define loc_F "lf"
+#define loc_F "Lf"
 /** @brief A constant for the spatial unit. */
 #define loc_UNIT 1.0
 #ifndef loc_EPS
@@ -56,7 +56,7 @@ typedef double mass_t;
 #define mass_UNIT 1.0
 
 /** @brief Checks if a time represent a future but still reachable event. */
-#define IS_FUTURE_TIME(t) (isfinite(t) && 0 < (t))
+#define IS_FUTURE_TIME(t) (isfinite(t) && time_EPS < (t))
 
 /** @brief Checks if a time is before an other time. */
 #define IS_BEFORE(t1, t2) (isless((t1),(t2)) || (!isfinite(t2) && isfinite(t1)))

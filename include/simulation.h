@@ -20,7 +20,7 @@
  * @param callback  callback function (for example a drawing function)
  * @param callback_rate  time between two callback
  */
-void simulation_loop (particle_t *particle_list[], size_t nb_part, time_t duration, void (*callback)(void), time_t callback_rate);
+void simulation_loop (particle_t *particle_list[], size_t nb_part, time_t duration, void (*callback)(time_t timestamp), time_t callback_rate);
 
 
 /** @brief Fill a list of particles from a file.
