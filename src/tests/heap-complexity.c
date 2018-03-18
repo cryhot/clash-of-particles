@@ -5,7 +5,7 @@
 #include <stdlib.h>
 #include <time.h>
 
-#define MAX_NB 0x40000
+#define MAX_NB 0x400000
 #define MIN_NB 0x10
 
 int main(int argc, char const *argv[]) {
@@ -30,7 +30,7 @@ int main(int argc, char const *argv[]) {
     }
     dummies[0].key += 0;
 
-    for (size_t nb = MIN_NB; nb <= MAX_NB; nb = nb*17/16) {
+    for (size_t nb = MIN_NB; nb <= MAX_NB; nb = nb*5/4) {
         heap_t *dummy_heap = heap_new(&compare_dummies, NULL);
         clock_t start, end;
 

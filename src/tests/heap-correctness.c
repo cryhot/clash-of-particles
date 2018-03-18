@@ -12,13 +12,14 @@ static void dealloc_dummy(void *dummy) {
 }
 
 int main(void) {
+    unsigned int seed = 42;
     printf("====================\n");
     heap_t *dummy_heap = heap_new(&compare_dummies, &dealloc_dummy);
     dummy_t *d;
 
     for (size_t i = 0; i < 50; i++) {
         d = malloc(sizeof *d);
-        d->key = i;
+        d->key = rand_r(&seed)*50.0/RAND_MAX;
         if (asprintf(&(d->value), "dummy #%lu", i)<0) return 1;
 
         heap_insert(dummy_heap, d);
@@ -26,7 +27,7 @@ int main(void) {
 
     double k = -INFINITY;
     while ((d=heap_extract_min(dummy_heap)) != NULL) {
-        printf("extract <%s>\n", d->value);
+        printf("extract <%s>\tkey=%lf\n", d->value, d->key);
         if (d->key < k) {
             printf("ERROR: %f < %f!\n", d->key, k);
             printf("====================\n");
