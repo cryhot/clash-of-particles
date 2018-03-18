@@ -34,7 +34,7 @@ typedef long double time_t;
 #define time_UNIT 1.0
 #ifndef time_EPS
 /** @brief A constant for the temporal epsilon value, relative to the unit. */
-#define time_EPS 1e-16
+#define time_EPS 1e-15
 #endif
 
 /** @brief An alias to the type used for spatial locations. */
@@ -56,7 +56,7 @@ typedef double mass_t;
 #define mass_UNIT 1.0
 
 /** @brief Checks if a time represent a future but still reachable event. */
-#define IS_FUTURE_TIME(t) (isfinite(t) && time_EPS < (t))
+#define IS_FUTURE_TIME(t) (isfinite(t) && -time_EPS <= (t))
 
 /** @brief Checks if a time is before an other time. */
 #define IS_BEFORE(t1, t2) (isless((t1),(t2)) || (!isfinite(t2) && isfinite(t1)))

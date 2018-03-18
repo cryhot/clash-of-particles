@@ -30,8 +30,6 @@ int main(int argc, char const *argv[]) {
         count = strtol(argv[1], &endptr, 10);
         if (endptr!=NULL && *endptr=='\0') { // number read
             input_file = NULL; // will be generated
-            fprintf(stderr, "Not implemented!\n");
-            exit(EXIT_FAILURE);
         } else {
             input_file = fopen(argv[1], "r");
             if (input_file == NULL) {
@@ -46,14 +44,12 @@ int main(int argc, char const *argv[]) {
         fclose(input_file);
         input_file = NULL;
     } else
-        generate_particles(particle_list, count);
+        generate_particles(particle_list, count, 6502);
 
     CreateWindow("Gaz gaz gaz", W_SIZE, W_SIZE);
 
     simulation_loop(particle_list, count, 20000, &draw_frame, 2*time_UNIT);
-    // simulation_loop(particle_list, count, NEVER, &draw_frame, 2*time_UNIT);
 
-    // while (1);
     CloseWindow();
 
     for (size_t i = 0; i < count; i++) {

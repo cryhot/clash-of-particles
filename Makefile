@@ -16,10 +16,10 @@ D_TESTS		= tests
 D_VALGRIND	= valgrind
 
 #EXECUTABLES
-TARGETS = clash-of-particles snow read-file write-fact
-EXECUTABLES = $(TARGETS:%=$(D_BIN)/%)
-TEST-TARGETS = heap-correctness heap-complexity particle loader
-TEST-EXECUTABLES = $(TEST-TARGETS:%=$(D_TESTS)/%)
+EXECUTABLES = $(patsubst %,$(D_BIN)/%,clash-of-particles snow read-file write-fact)
+TARGETS = $(EXECUTABLES:$(D_BIN)/%=%) clash-of-particles-random
+TEST-EXECUTABLES = $(patsubst %,$(D_TESTS)/%,heap-correctness heap-complexity particle loader)
+TEST-TARGETS = $(TEST-EXECUTABLES:$(D_TESTS)/%=%)
 
 # FLAGS
 DFLAGS = -I $(D_INCLUDE)/ -I $(D_INCLUDE)/tests
@@ -34,8 +34,8 @@ VALGOPT = D_BUILD=$(D_VALGRIND)/$(D_BUILD) \
 .DEFAULT_GOAL = compile-all
 DEFAULT_INPUT_FILE = $(D_DATA)/newton-simple.txt
 .PHONY: clean mrproper nothing compile-all doc $(D_BIN)/ $(D_TESTS)/
-.PHONY: $(TARGETS:%=compile-%) $(TARGETS:%=run-%) $(TARGETS:%=valgrind-%)
-.PHONY: $(TEST-TARGETS:%=compile-test-%) $(TEST-TARGETS:%=test-%) $(TEST-TARGETS:%=valgrind-test-%)
+.PHONY: $(EXECUTABLES:$(D_BIN)/%=compile-%) $(TARGETS:%=run-%) $(TARGETS:%=valgrind-%)
+.PHONY: $(TEST-EXECUTABLES:$(D_TESTS)/%=compile-test-%) $(TEST-TARGETS:%=test-%) $(TEST-TARGETS:%=valgrind-test-%)
 
 .SECONDARY .PHONY: $(D_DATA)/complexity_heap.csv
 
@@ -48,35 +48,59 @@ $(D_TESTS)/: $(TEST-EXECUTABLES)
 	@mkdir -p $@
 
 # executables compilation
-$(patsubst %,compile-%,$(TARGETS)): compile-%: $(D_BIN)/%
+$(patsubst $(D_BIN)/%,compile-%,$(EXECUTABLES)): \
+compile-%: $(D_BIN)/%
 
 # run executables
-$(patsubst %,run-%,$(filter-out clash-of-particles snow read-file,$(TARGETS))): run-%: $(D_BIN)/%
+$(patsubst %,run-%,$(filter-out clash-of-particles clash-of-particles-random snow read-file,$(TARGETS))): \
+run-%: $(D_BIN)/%
 	$(PRE_)./$<
-$(patsubst %,run-%,clash-of-particles): run-%: $(D_BIN)/% $(DEFAULT_INPUT_FILE)
+
+$(patsubst %,run-%,clash-of-particles): \
+run-%: $(D_BIN)/% $(DEFAULT_INPUT_FILE)
 	$(PRE_)./$< $(DEFAULT_INPUT_FILE)
-$(patsubst %,run-%,snow): run-%: $(D_BIN)/%
+
+$(patsubst %,run-%,clash-of-particles-random): \
+run-%-random: $(D_BIN)/%
+	$(PRE_)./$< 1000
+
+$(patsubst %,run-%,snow): \
+run-%: $(D_BIN)/%
 	( echo 200 ) | $(PRE_)./$<
-$(patsubst %,run-%,read-file): run-%: $(D_BIN)/% $(D_DATA)/toread.txt
+
+$(patsubst %,run-%,read-file): \
+run-%: $(D_BIN)/% $(D_DATA)/toread.txt
 	$(PRE_)./$< $(D_DATA)/toread.txt
-$(patsubst %,valgrind-%,$(TARGETS)): valgrind-%:
+
+$(patsubst %,valgrind-%,$(TARGETS)): \
+valgrind-%:
 	$(MAKE) $(VALGOPT) $(@:valgrind-%=run-%)
 
 # test executables compilation
-$(patsubst %,compile-test-%,$(TEST-TARGETS)): compile-test-%: $(D_TESTS)/%
+$(patsubst $(D_TESTS)/%,compile-test-%,$(TEST-EXECUTABLES)): \
+compile-test-%: $(D_TESTS)/%
 
 # run test-executables
-$(patsubst %,test-%,$(filter-out loader heap-complexity,$(TEST-TARGETS))): test-%: $(D_TESTS)/%
+$(patsubst %,test-%,$(filter-out loader heap-complexity,$(TEST-TARGETS))): \
+test-%: $(D_TESTS)/%
 	$(PRE_)./$<
-$(patsubst %,test-%,loader): test-%: $(D_TESTS)/% $(DEFAULT_INPUT_FILE)
+
+$(patsubst %,test-%,loader): test-%: \
+$(D_TESTS)/% $(DEFAULT_INPUT_FILE)
 	$(PRE_)./$< $(DEFAULT_INPUT_FILE)
-$(patsubst %,test-%,heap-complexity): $(D_SCRIPTS)/plot_heap_complexity.py $(D_DATA)/complexity_heap.csv
+
+$(patsubst %,test-%,heap-complexity): \
+$(D_SCRIPTS)/plot_heap_complexity.py $(D_DATA)/complexity_heap.csv
 	./$< $(D_DATA)/complexity_heap.csv
-$(patsubst %,valgrind-test-%,$(TEST-TARGETS)): valgrind-test-%:
+
+$(patsubst %,valgrind-test-%,$(TEST-TARGETS)): \
+valgrind-test-%:
 	$(MAKE) $(VALGOPT) $(@:valgrind-test-%=test-%)
 
 $(D_DATA)/complexity_heap.csv: $(D_TESTS)/heap-complexity
 	$(PRE_)./$< $@
+
+
 
 doc:
 	( cat $(D_CONF)/doxygen.conf ; echo "OUTPUT_DIRECTORY=$(D_DOC)" ) | doxygen -
@@ -125,3 +149,6 @@ clean:
 
 mrproper: clean
 	- rm -rf $(D_BIN)/ $(D_TESTS)/ $(D_DOC)/
+
+nothing:
+	@# nothing to do

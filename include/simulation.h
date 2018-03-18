@@ -47,7 +47,7 @@ size_t load_raw_particles (particle_t *particle_list[], size_t max_count, FILE* 
  * @param particle_list  list to fill
  * @param count  number of particle to generate
  */
-void generate_particles (particle_t *particle_list[], size_t count);
+void generate_particles (particle_t *particle_list[], size_t count, unsigned int seed);
 
 
 /** @brief Export a list of particles to a file.

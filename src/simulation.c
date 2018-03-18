@@ -1,3 +1,4 @@
+#define _POSIX_C_SOURCE 199506L
 #include "simulation.h"
 #include "event.h"
 #include "heap.h"
@@ -6,19 +7,17 @@
 /** @brief Compute future collision of a particule with an hyperplane. */
 static void compute_collisions_hplane(heap_t *event_heap, particle_t *p) {
     time_t t_min = NEVER;
-    size_t i_min = 0;
-    for (size_t i = 0; i < NB_DIM*2; i++) { // iterate through dimentions and walls
-        loc_t pos = (i&1)*loc_UNIT; // position = 0|1
-        if (EQ_LOC_ZERO(p->position[i>>1]-pos-p->radius) || EQ_LOC_ZERO(p->position[i>>1]-pos+p->radius)) continue; // skip current wall
-        time_t t = time_before_crossing_hplane(p, i>>1, pos);
+    size_t d_min = 0;
+    for (size_t d = 0; d < NB_DIM; d++) { // iterate through dimentions
+        time_t t = time_before_crossing_hplane(p, d, (p->velocity[d]<0)?0:1*loc_UNIT);
         if (IS_FUTURE_TIME(t) && IS_BEFORE(t, t_min)) {
             t_min = t;
-            i_min = i;
+            d_min = d;
         }
     }
     // printf(">> %lu (%"time_F") %d\n", i_min, t_min, IS_FUTURE_TIME(t_min));
     if (IS_FUTURE_TIME(t_min))
-        heap_insert(event_heap, event_collide_hplane(p->timestamp+t_min, p, i_min>>1));
+        heap_insert(event_heap, event_collide_hplane(p->timestamp+t_min, p, d_min));
 }
 
 /** @brief Compute future collision between two particules. */
@@ -156,9 +155,42 @@ load_raw_particles(particle_t *particle_list[], size_t max_count, FILE* file)
 }
 
 void
-generate_particles(particle_t *particle_list[], size_t count)
+generate_particles(particle_t *particle_list[], size_t count, unsigned int seed)
 {
-
+    const long double MAX_RADIUS = 0.010;
+    const long double MIN_REL_RADIUS = 0.4; // relative to max radius
+    const long double MAX_VELOCITY = 0.0005;
+    const long double MAX_MASS = 0.8;
+    const long double MIN_REL_MASS = 0.5; // relative to max mass
+    particle_t *p = malloc(sizeof *p);
+    size_t i = 0;
+    while (i < count) {
+        long double radius = ( MIN_REL_RADIUS+rand_r(&seed)*(1-MIN_REL_RADIUS)/RAND_MAX )*MAX_RADIUS;
+        for (size_t d = 0; d < NB_DIM; d++)
+            p->position[d] = ( radius + rand_r(&seed)*(1.L-2.L*radius)/RAND_MAX )*loc_UNIT;
+        p->radius = radius*loc_UNIT;
+        for (size_t j = 0; j < i; j++) {
+            if (loc_distance(p->position, particle_list[j]->position) < p->radius+particle_list[j]->radius)
+                goto end_loop;
+        }
+        if (false) {end_loop: continue;}
+        p->timestamp   = 0;
+        p->col_counter = 0;
+        do { // uniform repartition in a sphere
+            for (size_t d = 0; d < NB_DIM; d++)
+                p->velocity[d] = ( rand_r(&seed)*(2.L*MAX_VELOCITY)/RAND_MAX - MAX_VELOCITY )*loc_UNIT;
+        } while (loc_scal_prod(p->velocity,p->velocity)>MAX_VELOCITY*loc_UNIT*MAX_VELOCITY*loc_UNIT);
+        p->mass = ( MIN_REL_MASS+rand_r(&seed)*(1-MIN_REL_MASS)/RAND_MAX )*MAX_MASS*mass_UNIT;
+        // p->color = 1 + rand_r(&seed)%7;
+        particle_list[i++] = p;
+        p = malloc(sizeof *p);
+    }
+    free(p);
+    // particle_list[0]->position[0]=1.;
+    // particle_list[0]->position[1]=0.5;
+    // particle_list[0]->radius=0.01;
+    // printf("%"loc_F" %"loc_F" r=%"loc_F" \n", particle_list[0]->position[0], particle_list[0]->position[1], particle_list[0]->radius );
+    // particle_list[0]->velocity[0]=0.01;
 }
 
 
