@@ -16,7 +16,7 @@ D_TESTS		= tests
 D_VALGRIND	= valgrind
 
 #EXECUTABLES
-EXECUTABLES = $(patsubst %,$(D_BIN)/%,clash-of-particles snow read-file write-fact)
+EXECUTABLES = $(patsubst %,$(D_BIN)/%,clash-of-particles particles-break-dance snow read-file write-fact)
 TARGETS = $(EXECUTABLES:$(D_BIN)/%=%) clash-of-particles-random
 TEST-EXECUTABLES = $(patsubst %,$(D_TESTS)/%,heap-correctness heap-complexity particle loader)
 TEST-TARGETS = $(TEST-EXECUTABLES:$(D_TESTS)/%=%)
@@ -135,6 +135,7 @@ $(TEST-EXECUTABLES): $(D_TESTS)/%: $(D_BUILD)/tests/%.o
 
 # link executables / test-executables
 $(D_BIN)/clash-of-particles: $(patsubst %,$(D_BUILD)/%.o,simulation event particle physics heap disc)
+$(D_BIN)/particles-break-dance: $(patsubst %,$(D_BUILD)/%.o,simulation event particle physics heap disc)
 $(D_BIN)/snow: $(D_BUILD)/disc.o
 $(D_TESTS)/heap-correctness: $(D_BUILD)/heap.o
 $(D_TESTS)/heap-complexity:  $(D_BUILD)/heap.o

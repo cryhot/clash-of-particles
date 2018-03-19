@@ -65,6 +65,7 @@ Here are some useful target (do not hesitate to use command line `make` auto-com
 - `run-%`: run correctly an executable. For example:
  - `run-clash-of-particles` (default file: `data/newton-simple.txt`)
  - `run-clash-of-particles-random` (default particle quantity: `1000`)
+ - `run-particles-break-dance` (demo for back in time calculation)
  - `run-snow`
 - `valgrind-%`: run correctly an executable using `valgrind`.
 
@@ -74,6 +75,7 @@ Here are some useful target (do not hesitate to use command line `make` auto-com
   - `test-heap-complexity`
   - `test-particle`
   - `test-loader`
+
 - `valgrind-test-%`: run correctly a test.
 
 ### other

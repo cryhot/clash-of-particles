@@ -192,11 +192,6 @@ generate_particles(particle_t *particle_list[], size_t count, unsigned int seed)
         p = malloc(sizeof *p);
     }
     free(p);
-    // particle_list[0]->position[0]=1.;
-    // particle_list[0]->position[1]=0.5;
-    // particle_list[0]->radius=0.01;
-    // printf("%"loc_F" %"loc_F" r=%"loc_F" \n", particle_list[0]->position[0], particle_list[0]->position[1], particle_list[0]->radius );
-    // particle_list[0]->velocity[0]=0.01;
 }
 
 
