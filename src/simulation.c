@@ -5,53 +5,59 @@
 #include <stdlib.h>
 
 /** @brief Compute future collision of a particule with an hyperplane. */
-static void compute_collisions_hplane(heap_t *event_heap, particle_t *p) {
+static void compute_collisions_hplane(heap_t *event_heap, particle_t *p, int time_flow) {
     time_t t_min = NEVER;
     size_t d_min = 0;
     for (size_t d = 0; d < NB_DIM; d++) { // iterate through dimentions
-        time_t t = time_before_crossing_hplane(p, d, (p->velocity[d]<0)?0:1*loc_UNIT);
+        time_t t = time_before_crossing_hplane(p, d, (p->velocity[d]*time_flow<0)?0:1*loc_UNIT) * time_flow;
         if (IS_FUTURE_TIME(t) && IS_BEFORE(t, t_min)) {
             t_min = t;
             d_min = d;
         }
     }
-    // printf(">> %lu (%"time_F") %d\n", i_min, t_min, IS_FUTURE_TIME(t_min));
     if (IS_FUTURE_TIME(t_min))
-        heap_insert(event_heap, event_collide_hplane(p->timestamp+t_min, p, d_min));
+        heap_insert(event_heap, event_collide_hplane(p->timestamp*time_flow+t_min, p, d_min));
 }
 
 /** @brief Compute future collision between two particules. */
-static void compute_collisions_particules(heap_t *event_heap, particle_t *p1, particle_t *p2) {
-    time_t t = time_before_contact(p1, p2);
+static void compute_collisions_particules(heap_t *event_heap, particle_t *p1, particle_t *p2, int time_flow) {
+    time_t t = time_before_contact(p1, p2) * time_flow;
     if (!IS_FUTURE_TIME(t)) return;
-    heap_insert(event_heap, event_collide_particle(p1->timestamp+t, p1, p2));
+    heap_insert(event_heap, event_collide_particle(p1->timestamp*time_flow+t, p1, p2));
 }
 
 
 void
 simulation_loop(particle_t *particle_list[], size_t nb_part, time_t duration, void (*callback)(time_t timestamp), time_t callback_rate)
 {
+    int time_flow = 1;
+    if (duration<0) {
+        time_flow *= -1;
+    }
+    if (callback_rate<0)
+        callback_rate *= -1;
     heap_t *event_heap = heap_new(&compare_events, &free); // queue of future events
     if (!EQ_TIME_ZERO(callback_rate)) // create first refresh event
         heap_insert(event_heap, event_refresh(0));
     for (size_t i = 0; i < nb_part; i++) { // compute every collision events at initial state
-        compute_collisions_hplane(event_heap, particle_list[i]);
+        compute_collisions_hplane(event_heap, particle_list[i], time_flow);
         for (size_t j = i+1; j < nb_part; j++) {
-            compute_collisions_particules(event_heap, particle_list[i], particle_list[j]);
+            compute_collisions_particules(event_heap, particle_list[i], particle_list[j], time_flow);
         }
     }
 
     event_t *event;
     while ((event=heap_extract_min(event_heap)) != NULL) { // mail loop: process queued events
-        if (IS_BEFORE(duration, event->timestamp)) { // end of simulation reached
+        if (IS_BEFORE(duration*time_flow, event->timestamp)) { // end of simulation reached
             free(event);
             break;
         }
+        if (get_event_type(event)!=EVENT_REFRESH)
         if (!event_is_valid(event)) { // discard invalid events
             free(event);
             continue;
         }
-        time_t t = event->timestamp;
+        time_t t = event->timestamp / time_flow;
         switch (get_event_type(event)) {
             case EVENT_COLLIDE_PARTICLE:
                 // update concerned particles
@@ -59,13 +65,13 @@ simulation_loop(particle_t *particle_list[], size_t nb_part, time_t duration, vo
                 update(event->particle_b, t);
                 collide_particle(event->particle_a, event->particle_b);
                 // compute collisions
-                compute_collisions_hplane(event_heap, event->particle_a);
-                compute_collisions_hplane(event_heap, event->particle_b);
+                compute_collisions_hplane(event_heap, event->particle_a, time_flow);
+                compute_collisions_hplane(event_heap, event->particle_b, time_flow);
                 for (size_t i = 0; i < nb_part; i++) {
                     if (particle_list[i] == event->particle_a) continue;
                     if (particle_list[i] == event->particle_b) continue;
-                    compute_collisions_particules(event_heap, event->particle_a, particle_list[i]);
-                    compute_collisions_particules(event_heap, event->particle_b, particle_list[i]);
+                    compute_collisions_particules(event_heap, event->particle_a, particle_list[i], time_flow);
+                    compute_collisions_particules(event_heap, event->particle_b, particle_list[i], time_flow);
                 }
                 break;
             case EVENT_COLLIDE_HPLANE:
@@ -73,15 +79,15 @@ simulation_loop(particle_t *particle_list[], size_t nb_part, time_t duration, vo
                 update(event->particle_a, t);
                 collide_hplane(event->particle_a, event->particle_b_col);
                 // compute collisions
-                compute_collisions_hplane(event_heap, event->particle_a);
+                compute_collisions_hplane(event_heap, event->particle_a, time_flow);
                 for (size_t i = 0; i < nb_part; i++) {
                     if (particle_list[i] == event->particle_a) continue;
-                    compute_collisions_particules(event_heap, event->particle_a, particle_list[i]);
+                    compute_collisions_particules(event_heap, event->particle_a, particle_list[i], time_flow);
                 }
                 break;
             case EVENT_REFRESH:
                 (*callback)(t);
-                heap_insert(event_heap, event_refresh(t+callback_rate));
+                heap_insert(event_heap, event_refresh(t*time_flow+callback_rate));
                 break;
         }
         free(event);

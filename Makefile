@@ -29,10 +29,12 @@ LDFLAGS-T = $(LDFLAGS)
 VALGOPT = D_BUILD=$(D_VALGRIND)/$(D_BUILD) \
           D_BIN=$(D_VALGRIND)/$(D_BIN) \
           D_TESTS=$(D_VALGRIND)/$(D_TESTS) \
-          NOGUI=1 DEBUG=1
+          NOGUI=1 DEBUG=1 DEFAULT_NB_PART=100
 
 .DEFAULT_GOAL = compile-all
 DEFAULT_INPUT_FILE = $(D_DATA)/newton-simple.txt
+DEFAULT_NB_PART = 1000
+DEFAULT_DURATION = 20000
 .PHONY: clean mrproper nothing compile-all doc $(D_BIN)/ $(D_TESTS)/
 .PHONY: $(EXECUTABLES:$(D_BIN)/%=compile-%) $(TARGETS:%=run-%) $(TARGETS:%=valgrind-%)
 .PHONY: $(TEST-EXECUTABLES:$(D_TESTS)/%=compile-test-%) $(TEST-TARGETS:%=test-%) $(TEST-TARGETS:%=valgrind-test-%)
@@ -58,11 +60,11 @@ run-%: $(D_BIN)/%
 
 $(patsubst %,run-%,clash-of-particles): \
 run-%: $(D_BIN)/% $(DEFAULT_INPUT_FILE)
-	$(PRE_)./$< $(DEFAULT_INPUT_FILE)
+	$(PRE_)./$< $(DEFAULT_INPUT_FILE) $(DEFAULT_DURATION)
 
 $(patsubst %,run-%,clash-of-particles-random): \
 run-%-random: $(D_BIN)/%
-	$(PRE_)./$< 1000
+	$(PRE_)./$< $(DEFAULT_NB_PART) $(DEFAULT_DURATION)
 
 $(patsubst %,run-%,snow): \
 run-%: $(D_BIN)/%
