@@ -22,6 +22,8 @@ For additional informations, see the doxygen documentation (`make doc`).
 # File structure
 ```
     project/                    
+     ├─Makefile                 
+     ├─README.md                
      ├─src/                     source files
      │  ├─*.c                   
      │  └─tests/                source files for tests
@@ -63,10 +65,10 @@ Here are some useful target (do not hesitate to use command line `make` auto-com
 
 ### execution
 - `run-%`: run correctly an executable. For example:
- - `run-clash-of-particles` (default file: `data/newton-simple.txt`)
- - `run-clash-of-particles-random` (default particle quantity: `1000`)
- - `run-particles-break-dance` (demo for back in time calculation)
- - `run-snow`
+  - `run-clash-of-particles` (default file: `data/newton-simple.txt`)
+  - `run-clash-of-particles-random` (default particle quantity: `1000`)
+  - `run-particles-break-dance` (demo for back in time calculation)
+  - `run-snow`
 - `valgrind-%`: run correctly an executable using `valgrind`.
 
 ### tests
@@ -75,8 +77,7 @@ Here are some useful target (do not hesitate to use command line `make` auto-com
   - `test-heap-complexity`
   - `test-particle`
   - `test-loader`
-
-- `valgrind-test-%`: run correctly a test.
+- `valgrind-test-%`: run correctly a test using `valgrind`.
 
 ### other
 - `doc`: gerenate the doxygen documentation

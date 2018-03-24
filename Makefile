@@ -151,7 +151,7 @@ clean:
 	- rm -rf $(D_BUILD)/ *.csv fact.txt $(D_DATA)/complexity_heap.csv $(D_VALGRIND)/$(D_BUILD)/
 
 mrproper: clean
-	- rm -rf $(D_BIN)/ $(D_TESTS)/ $(D_DOC)/
+	- rm -rf $(D_BIN)/ $(D_TESTS)/ $(D_DOC)/ $(D_VALGRIND)/
 
 nothing:
 	@# nothing to do
